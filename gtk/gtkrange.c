@@ -2197,10 +2197,31 @@ gtk_range_size_allocate (GtkWidget     *widget,
 
   gtk_widget_set_allocation (widget, allocation);
 
-  if (gtk_widget_get_realized (widget))
-    gdk_window_move_resize (priv->event_window,
-                            allocation->x, allocation->y,
-                            allocation->width, allocation->height);
+  if (gtk_widget_get_realized (widget)) {
+    if (GTK_IS_SCROLLBAR (widget)) {
+      const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+      if (config && (strcmp (config, "1") == 0)) {
+        if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+          gdk_window_move_resize (priv->event_window,
+                                  allocation->x - 5, allocation->y,
+                                  allocation->width + 10, allocation->height);
+        else
+          gdk_window_move_resize (priv->event_window,
+                                  allocation->x, allocation->y - 5,
+                                  allocation->width, allocation->height + 10);
+      }
+      else {
+        gdk_window_move_resize (priv->event_window, // default
+                                allocation->x, allocation->y,
+                                allocation->width, allocation->height);
+      }
+    }
+    else {
+      gdk_window_move_resize (priv->event_window,
+                              allocation->x, allocation->y,
+                              allocation->width, allocation->height);
+    }
+  }
 
   gtk_css_gadget_allocate (priv->gadget,
                            allocation,
