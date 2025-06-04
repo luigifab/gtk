@@ -2187,6 +2187,14 @@ gtk_range_allocate (GtkCssGadget        *gadget,
   gdk_rectangle_union (out_clip, allocation, out_clip);
 }
 
+static gboolean
+on_draw_event_window (GdkWindow *window, cairo_t *cr, gpointer data)
+{
+  cairo_set_source_rgba (cr, 0, 0, 0, 0.5); // noir à 50 %
+  cairo_paint (cr);
+  return FALSE;
+}
+
 static void
 gtk_range_size_allocate (GtkWidget     *widget,
                          GtkAllocation *allocation)
@@ -2201,6 +2209,7 @@ gtk_range_size_allocate (GtkWidget     *widget,
     if (GTK_IS_SCROLLBAR (widget)) {
       const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
       if (config && (strcmp (config, "1") == 0)) {
+        g_signal_connect (priv->event_window, "draw", G_CALLBACK (on_draw_event_window), NULL);
         if (priv->orientation == GTK_ORIENTATION_VERTICAL)
           gdk_window_move_resize (priv->event_window,
                                   allocation->x - 5, allocation->y,
