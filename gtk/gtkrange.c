@@ -2262,7 +2262,7 @@ gtk_range_realize (GtkWidget *widget)
   attributes.y = allocation.y;
   attributes.width = allocation.width;
   attributes.height = allocation.height;
-  attributes.wclass = GDK_INPUT_ONLY;
+  attributes.wclass = GDK_INPUT_OUTPUT; // GDK_INPUT_ONLY;
   attributes.event_mask = gtk_widget_get_events (widget);
   attributes.event_mask |= GDK_BUTTON_PRESS_MASK |
                            GDK_BUTTON_RELEASE_MASK |
