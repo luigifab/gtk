@@ -3237,6 +3237,17 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
+      if (GTK_IS_SCROLLBAR (widget)) {
+        const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+        if (config && (strcmp (config, "1") == 0)) {
+          GtkAllocation alloc;
+          gtk_widget_get_allocation (widget, &alloc);
+          if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+            x = alloc.x + alloc.width / 2.0;
+          else
+            y = alloc.y + alloc.height / 2.0;
+        }
+      }
       priv->mouse_x = x;
       priv->mouse_y = y;
     }
