@@ -2187,14 +2187,6 @@ gtk_range_allocate (GtkCssGadget        *gadget,
   gdk_rectangle_union (out_clip, allocation, out_clip);
 }
 
-static gboolean
-on_draw_event_window (GdkWindow *window, cairo_t *cr, gpointer data)
-{
-  cairo_set_source_rgba (cr, 0, 0, 0, 0.5); // noir à 50 %
-  cairo_paint (cr);
-  return FALSE;
-}
-
 static void
 gtk_range_size_allocate (GtkWidget     *widget,
                          GtkAllocation *allocation)
@@ -2209,15 +2201,14 @@ gtk_range_size_allocate (GtkWidget     *widget,
     if (GTK_IS_SCROLLBAR (widget)) {
       const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
       if (config && (strcmp (config, "1") == 0)) {
-        g_signal_connect (priv->event_window, "draw", G_CALLBACK (on_draw_event_window), NULL);
         if (priv->orientation == GTK_ORIENTATION_VERTICAL)
           gdk_window_move_resize (priv->event_window,
-                                  allocation->x - 5, allocation->y,
-                                  allocation->width + 10, allocation->height);
+                                  allocation->x - 10, allocation->y,
+                                  allocation->width + 20, allocation->height);
         else
           gdk_window_move_resize (priv->event_window,
-                                  allocation->x, allocation->y - 5,
-                                  allocation->width, allocation->height + 10);
+                                  allocation->x, allocation->y - 10,
+                                  allocation->width, allocation->height + 20);
       }
       else {
         gdk_window_move_resize (priv->event_window, // default
@@ -3246,17 +3237,19 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
+      g_print("befor x=%d, y=%d\n", x, y);
       if (GTK_IS_SCROLLBAR (widget)) {
         const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
         if (config && (strcmp (config, "1") == 0)) {
           GtkAllocation alloc;
           gtk_widget_get_allocation (widget, &alloc);
           if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-            x = alloc.x + alloc.width / 2.0;
+            x = alloc.width / 2.0 + 10;
           else
-            y = alloc.y + alloc.height / 2.0;
+            y = alloc.height / 2.0 + 10;
         }
       }
+      g_print("after x=%d, y=%d\n", x, y);
       priv->mouse_x = x;
       priv->mouse_y = y;
     }
