@@ -2200,15 +2200,30 @@ gtk_range_size_allocate (GtkWidget     *widget,
   if (gtk_widget_get_realized (widget)) {
     if (GTK_IS_SCROLLBAR (widget)) {
       const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+      //if (config && (strcmp (config, "1") == 0)) {
+      //  if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+      //    gdk_window_move_resize (priv->event_window,
+      //                            allocation->x - 10, allocation->y,
+      //                            allocation->width + 20, allocation->height);
+      //  else
+      //    gdk_window_move_resize (priv->event_window,
+      //                            allocation->x, allocation->y - 10,
+      //                            allocation->width, allocation->height + 20);
+      //}
       if (config && (strcmp (config, "1") == 0)) {
-        if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-          gdk_window_move_resize (priv->event_window,
-                                  allocation->x - 10, allocation->y,
-                                  allocation->width + 20, allocation->height);
-        else
-          gdk_window_move_resize (priv->event_window,
-                                  allocation->x, allocation->y - 10,
-                                  allocation->width, allocation->height + 20);
+        GtkWidget *toplevel_widget = gtk_widget_get_toplevel (widget);
+        GdkWindow *toplevel_window = gtk_widget_get_window (toplevel_widget);
+        gint rel_x, rel_y;
+        if (priv->orientation == GTK_ORIENTATION_VERTICAL) {
+          gtk_widget_translate_coordinates (widget, toplevel_widget, allocation->x - 10, allocation->y, &rel_x, &rel_y);
+          gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y);
+          gdk_window_resize (priv->event_window, allocation->width + 20, allocation->height);
+        }
+        else {
+          gtk_widget_translate_coordinates (widget, toplevel_widget, allocation->x, allocation->y - 10, &rel_x, &rel_y);
+          gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y);
+          gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
+        }
       }
       else {
         gdk_window_move_resize (priv->event_window, // default
@@ -3237,7 +3252,7 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
-      g_print("befor x=%d, y=%d\n", x, y);
+      g_print("befor x=%f, y=%f\n", x, y);
       if (GTK_IS_SCROLLBAR (widget)) {
         const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
         if (config && (strcmp (config, "1") == 0)) {
@@ -3249,7 +3264,7 @@ gtk_range_event (GtkWidget *widget,
             y = alloc.height / 2.0 + 10;
         }
       }
-      g_print("after x=%d, y=%d\n", x, y);
+      g_print("after x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
       priv->mouse_x = x;
       priv->mouse_y = y;
     }
