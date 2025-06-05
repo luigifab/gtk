@@ -2727,7 +2727,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
                                       gdouble               y,
                                       GtkRange             *range)
 {
-	g_print("\n\ngtk_range_multipress_gesture_pressed\n");
+  g_print("\n\ngtk_range_multipress_gesture_pressed y=%f\n", y);
   GtkWidget *widget = GTK_WIDGET (range);
   GtkRangePrivate *priv = range->priv;
   GdkDevice *source_device;
@@ -3264,7 +3264,7 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
-      g_print ("before get coords mx=%d my=%d x=%d y=%d\n", priv->mouse_x, priv->mouse_y, x, y);
+      g_print ("before get coords mx=%d my=%d x=%f y=%f\n", priv->mouse_x, priv->mouse_y, x, y);
       priv->mouse_x = x;
       priv->mouse_y = y;
       update_mouse_coords (range, priv);
