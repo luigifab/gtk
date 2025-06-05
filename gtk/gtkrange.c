@@ -312,6 +312,23 @@ static guint signals[LAST_SIGNAL];
 static GParamSpec *properties[LAST_PROP];
 
 static void
+update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
+{
+  if (GTK_IS_SCROLLBAR (range)) {
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    if (config && (strcmp (config, "1") == 0)) {
+      GtkAllocation alloc;
+      gtk_widget_get_allocation (range, &alloc);
+      if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+        priv->mouse_x = alloc.width / 2.0;
+      else
+        priv->mouse_y = alloc.height / 2.0;
+      g_print("mouse upd to x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
+    }
+  }
+}
+
+static void
 gtk_range_class_init (GtkRangeClass *class)
 {
   GObjectClass   *gobject_class;
@@ -2750,7 +2767,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
 
   priv->mouse_x = x;
   priv->mouse_y = y;
-
+  update_mouse_coords (range, priv);
   gtk_range_update_mouse_location (range);
   if (!priv->mouse_location)
     return;
@@ -2887,6 +2904,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
 
   priv->mouse_x = x;
   priv->mouse_y = y;
+  update_mouse_coords (range, priv);
   range->priv->in_drag = FALSE;
   stop_scrolling (range);
 }
@@ -3223,6 +3241,7 @@ gtk_range_drag_gesture_update (GtkGestureDrag *gesture,
       priv->mouse_x = start_x + offset_x;
       priv->mouse_y = start_y + offset_y;
       priv->in_drag = TRUE;
+      update_mouse_coords (range, priv);
       update_autoscroll_mode (range);
 
       if (priv->autoscroll_mode == GTK_SCROLL_NONE)
@@ -3257,21 +3276,9 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
-      if (GTK_IS_SCROLLBAR (widget)) {
-        g_print("befor x=%f, y=%f\n", x, y);
-        const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
-        if (config && (strcmp (config, "1") == 0)) {
-          GtkAllocation alloc;
-          gtk_widget_get_allocation (widget, &alloc);
-          if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-            x = alloc.width / 2.0 + 10;
-          else
-            y = alloc.height / 2.0 + 10;
-          g_print("after x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
-        }
-      }
       priv->mouse_x = x;
       priv->mouse_y = y;
+      update_mouse_coords (range, priv);
     }
 
   gtk_range_update_mouse_location (range);
