@@ -2295,9 +2295,9 @@ gtk_range_realize (GtkWidget *widget)
   if (GTK_IS_SCROLLBAR (widget)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->multipress_gesture), priv->event_window);
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->long_press_gesture), priv->event_window);
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->drag_gesture), priv->event_window);
+	    gtk_gesture_set_window (GTK_GESTURE (priv->multipress_gesture), priv->event_window);
+      gtk_gesture_set_window (GTK_GESTURE (priv->long_press_gesture), priv->event_window);
+      gtk_gesture_set_window (GTK_GESTURE (priv->drag_gesture), priv->event_window);
     }
   }
 }
@@ -2313,9 +2313,9 @@ gtk_range_unrealize (GtkWidget *widget)
   if (GTK_IS_SCROLLBAR (widget)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->multipress_gesture), NULL);
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->long_press_gesture), NULL);
-      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->drag_gesture), NULL);
+      gtk_gesture_set_window (GTK_GESTURE (priv->multipress_gesture), NULL);
+      gtk_gesture_set_window (GTK_GESTURE (priv->long_press_gesture), NULL);
+      gtk_gesture_set_window (GTK_GESTURE (priv->drag_gesture), NULL);
     }
   }
 
