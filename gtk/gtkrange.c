@@ -3572,7 +3572,7 @@ gtk_range_update_mouse_location (GtkRange *range)
   else
     priv->mouse_location = NULL;
 
-g_print("loc=%s\n", gtk_css_node_get_name (gtk_css_gadget_get_node (priv->mouse_location)));
+g_print("loc=%s x=%d y=%d\n", gtk_css_node_get_name (gtk_css_gadget_get_node (priv->mouse_location)), x, y);
 
   if (old_location != priv->mouse_location)
     {
