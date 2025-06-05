@@ -3252,8 +3252,8 @@ gtk_range_event (GtkWidget *widget,
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
-      g_print("befor x=%f, y=%f\n", x, y);
       if (GTK_IS_SCROLLBAR (widget)) {
+        g_print("befor x=%f, y=%f\n", x, y);
         const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
         if (config && (strcmp (config, "1") == 0)) {
           GtkAllocation alloc;
@@ -3262,9 +3262,9 @@ gtk_range_event (GtkWidget *widget,
             x = alloc.width / 2.0 + 10;
           else
             y = alloc.height / 2.0 + 10;
+          g_print("after x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
         }
       }
-      g_print("after x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
       priv->mouse_x = x;
       priv->mouse_y = y;
     }
