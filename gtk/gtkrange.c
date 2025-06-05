@@ -3259,6 +3259,7 @@ gtk_range_event (GtkWidget *widget,
     {
       priv->mouse_x = G_MININT;
       priv->mouse_y = G_MININT;
+	    g_print ("reset\n\n");
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
