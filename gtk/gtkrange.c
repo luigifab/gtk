@@ -311,17 +311,6 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (GtkRange, gtk_range, GTK_TYPE_WIDGET,
 static guint signals[LAST_SIGNAL];
 static GParamSpec *properties[LAST_PROP];
 
-static gboolean
-draw_event_window (GdkWindow *window, cairo_t *cr, gpointer user_data)
-{
-    gint width, height;
-    gdk_window_get_geometry(window, NULL, NULL, &width, &height);
-    cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 0.5);  // rouge semi-transparent
-    cairo_rectangle(cr, 0, 0, width, height);
-    cairo_fill(cr);
-    return FALSE;
-}
-
 static void
 gtk_range_class_init (GtkRangeClass *class)
 {
@@ -2228,12 +2217,12 @@ gtk_range_size_allocate (GtkWidget     *widget,
         gint rel_x, rel_y;
         if (priv->orientation == GTK_ORIENTATION_VERTICAL) {
           gtk_widget_translate_coordinates (widget, toplevel_widget, 0, 0, &rel_x, &rel_y);
-          gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y);
+          gdk_window_reparent (priv->event_window, toplevel_window, rel_x - 10, rel_y);
           gdk_window_resize (priv->event_window, allocation->width + 20, allocation->height);
         }
         else {
           gtk_widget_translate_coordinates (widget, toplevel_widget, 0, 0, &rel_x, &rel_y);
-          gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y);
+          gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y - 10);
           gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
         }
         g_print("repositi = x=%d, y=%d, w=%d, h=%d\n", rel_x, rel_y, allocation->width, allocation->height);
@@ -2295,7 +2284,9 @@ gtk_range_realize (GtkWidget *widget)
 
   priv->event_window = gdk_window_new (gtk_widget_get_parent_window (widget),
 					&attributes, attributes_mask);
-  g_signal_connect(G_OBJECT(priv->event_window),"draw",G_CALLBACK(draw_event_window),NULL);
+  GdkRGBA color = { 1.0, 0.0, 0.0, 0.5 }; // lol ?
+  gdk_window_set_background_rgba (priv->event_window, &color);
+  gdk_window_invalidate_rect (priv->event_window, NULL, TRUE);
   gtk_widget_register_window (widget, priv->event_window);
 }
 
