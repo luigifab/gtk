@@ -324,7 +324,7 @@ update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
         priv->mouse_x = alloc.width / 2.0;
       else
         priv->mouse_y = alloc.height / 2.0;
-      g_print("mouse upd to x=%f, y=%f, w=%d, h=%d\n", x, y, alloc.width, alloc.height);
+      g_print("mouse upd to x=%f, y=%f, w=%d, h=%d\n", priv->mouse_x, priv->mouse_y, alloc.width, alloc.height);
     }
   }
 }
