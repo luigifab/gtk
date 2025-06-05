@@ -2291,6 +2291,15 @@ gtk_range_realize (GtkWidget *widget)
   priv->event_window = gdk_window_new (gtk_widget_get_parent_window (widget),
 					&attributes, attributes_mask);
   gtk_widget_register_window (widget, priv->event_window);
+
+  if (GTK_IS_SCROLLBAR (widget)) {
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    if (config && (strcmp (config, "1") == 0)) {
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->multipress_gesture), priv->event_window);
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->long_press_gesture), priv->event_window);
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->drag_gesture), priv->event_window);
+    }
+  }
 }
 
 static void
@@ -2300,6 +2309,15 @@ gtk_range_unrealize (GtkWidget *widget)
   GtkRangePrivate *priv = range->priv;
 
   gtk_range_remove_step_timer (range);
+
+  if (GTK_IS_SCROLLBAR (widget)) {
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    if (config && (strcmp (config, "1") == 0)) {
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->multipress_gesture), NULL);
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->long_press_gesture), NULL);
+      gtk_event_controller_set_window (GTK_EVENT_CONTROLLER (priv->drag_gesture), NULL);
+    }
+  }
 
   gtk_widget_unregister_window (widget, priv->event_window);
   gdk_window_destroy (priv->event_window);
@@ -2751,21 +2769,6 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
 
   source_device = gdk_event_get_source_device ((GdkEvent *) event);
   source = gdk_device_get_source (source_device);
-
-  // translate coordinnates
-  if (GTK_IS_SCROLLBAR (widget) && (x == 0.0) && (y == 0.0)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
-    if (config && (strcmp (config, "1") == 0)) {
-        gint    ex, ey, wx, wy;
-        gdouble lx, ly;
-        gdk_window_get_origin (gdk_event_get_window (event), &ex, &ey);
-        gdk_window_get_origin (gtk_widget_get_window (widget), &wx, &wy);
-        gdk_event_get_coords (event, &lx, &ly);
-        x = lx + ex - wx;
-        y = ly + ey - wy;
-    }
-  }
-  g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
   
   priv->mouse_x = x;
   priv->mouse_y = y;
