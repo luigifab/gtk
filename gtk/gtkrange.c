@@ -314,11 +314,12 @@ static GParamSpec *properties[LAST_PROP];
 static void
 update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
 {
-  if (GTK_IS_SCROLLBAR (range)) {
+  GtkWidget *widget = GTK_WIDGET (range);
+  if (GTK_IS_SCROLLBAR (widget)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
       GtkAllocation alloc;
-      gtk_widget_get_allocation (range, &alloc);
+      gtk_widget_get_allocation (widget, &alloc);
       if (priv->orientation == GTK_ORIENTATION_VERTICAL)
         priv->mouse_x = alloc.width / 2.0;
       else
