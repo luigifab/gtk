@@ -314,7 +314,7 @@ static GParamSpec *properties[LAST_PROP];
 static void
 update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
 {
-  GtkWidget *widget = GTK_WIDGET (range);
+  GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
   if (GTK_IS_SCROLLBAR (widget)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
@@ -324,7 +324,7 @@ update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
         priv->mouse_x = alloc.width / 2.0;
       else
         priv->mouse_y = alloc.height / 2.0;
-      g_print("mouse upd to x=%f, y=%f, w=%d, h=%d\n", priv->mouse_x, priv->mouse_y, alloc.width, alloc.height);
+      g_print("mouse upd to x=%d, y=%d, w=%d, h=%d\n", priv->mouse_x, priv->mouse_y, alloc.width, alloc.height);
     }
   }
 }
