@@ -2756,12 +2756,13 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   if (GTK_IS_SCROLLBAR (widget) && (x == 0.0) && (y == 0.0)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
-      gint ex, ey;
-      gdk_window_get_origin (gdk_event_get_window (event), &ex , &ey);
-      gint wx, wy;
-      gdk_window_get_origin (gtk_widget_get_window (widget), &wx ,&wy);
-      x = gdk_event_get_x ((GdkEvent*)event) + ex - wx;
-      y = gdk_event_get_y ((GdkEvent*)event) + ey - wy;
+        gint    ex, ey, wx, wy;
+        gdouble lx, ly;
+        gdk_window_get_origin (gdk_event_get_window (event), &ex, &ey);
+        gdk_window_get_origin (gtk_widget_get_window (widget), &wx, &wy);
+        gdk_event_get_coords (event, &lx, &ly);
+        x = lx + ex - wx;
+        y = ly + ey - wy;
     }
   }
   g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
