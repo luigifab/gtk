@@ -1755,6 +1755,10 @@ gtk_window_init (GtkWindow *window)
 
   gtk_css_node_add_class (widget_node, g_quark_from_static_string (GTK_STYLE_CLASS_BACKGROUND));
 
+  const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+  if (config && (strcmp (config, "1") == 0))
+    gtk_css_node_add_class (widget_node, "scrollfix");
+
   priv->scale = gtk_widget_get_scale_factor (widget);
 
 #ifdef GDK_WINDOWING_X11
