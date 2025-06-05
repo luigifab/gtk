@@ -3549,30 +3549,46 @@ gtk_range_update_mouse_location (GtkRange *range)
   gtk_css_gadget_get_border_box (priv->slider_gadget, &slider_alloc);
   gdk_rectangle_union (&slider_alloc, &trough_alloc, &slider_trace);
 
-  if (priv->grab_location != NULL)
+  if (priv->grab_location != NULL) {
     priv->mouse_location = priv->grab_location;
+    g_print("loc=grab x=%d y=%d\n", x, y);
+  }
   else if (priv->stepper_a_gadget &&
-           gtk_css_gadget_border_box_contains_point (priv->stepper_a_gadget, x, y))
+           gtk_css_gadget_border_box_contains_point (priv->stepper_a_gadget, x, y)) {
     priv->mouse_location = priv->stepper_a_gadget;
+    g_print("loc=stepper_a x=%d y=%d\n", x, y);
+  }
   else if (priv->stepper_b_gadget &&
-           gtk_css_gadget_border_box_contains_point (priv->stepper_b_gadget, x, y))
+           gtk_css_gadget_border_box_contains_point (priv->stepper_b_gadget, x, y)) {
     priv->mouse_location = priv->stepper_b_gadget;
+    g_print("loc=stepper_b x=%d y=%d\n", x, y);
+  }
   else if (priv->stepper_c_gadget &&
-           gtk_css_gadget_border_box_contains_point (priv->stepper_c_gadget, x, y))
+           gtk_css_gadget_border_box_contains_point (priv->stepper_c_gadget, x, y)) {
     priv->mouse_location = priv->stepper_c_gadget;
+    g_print("loc=stepper_c x=%d y=%d\n", x, y);
+  }
   else if (priv->stepper_d_gadget &&
-           gtk_css_gadget_border_box_contains_point (priv->stepper_d_gadget, x, y))
+           gtk_css_gadget_border_box_contains_point (priv->stepper_d_gadget, x, y)) {
     priv->mouse_location = priv->stepper_d_gadget;
-  else if (gtk_css_gadget_border_box_contains_point (priv->slider_gadget, x, y))
+    g_print("loc=stepper_d x=%d y=%d\n", x, y);
+  }
+  else if (gtk_css_gadget_border_box_contains_point (priv->slider_gadget, x, y)) {
     priv->mouse_location = priv->slider_gadget;
-  else if (rectangle_contains_point (&slider_trace, x, y))
+    g_print("loc=slider x=%d y=%d\n", x, y);
+  }
+  else if (rectangle_contains_point (&slider_trace, x, y)) {
     priv->mouse_location = priv->trough_gadget;
-  else if (gtk_css_gadget_margin_box_contains_point (priv->gadget, x, y))
+    g_print("loc=trough x=%d y=%d\n", x, y);
+  }
+  else if (gtk_css_gadget_margin_box_contains_point (priv->gadget, x, y)) {
     priv->mouse_location = priv->gadget;
-  else
+    g_print("loc=main x=%d y=%d\n", x, y);
+  }
+  else {
     priv->mouse_location = NULL;
-
-g_print("loc=%s x=%d y=%d\n", gtk_css_node_get_name (gtk_css_gadget_get_node (priv->mouse_location)), x, y);
+    g_print("loc=null x=%d y=%d\n", x, y);
+  }
 
   if (old_location != priv->mouse_location)
     {
