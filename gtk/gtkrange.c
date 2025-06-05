@@ -2752,17 +2752,16 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   source_device = gdk_event_get_source_device ((GdkEvent *) event);
   source = gdk_device_get_source (source_device);
 
-  // translate coordinates
-  if (GTK_IS_SCROLLBAR (widget)) {
+  // translate coordinnates
+  if (GTK_IS_SCROLLBAR (widget) && (x == 0.0) && (y == 0.0)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
     if (config && (strcmp (config, "1") == 0)) {
-      gdouble rx, ry;
-      gint    wx, wy;
-      if (event && gdk_event_get_root_coords (event, &rx, &ry)) {
-        gdk_window_get_origin (gtk_widget_get_window (widget), &wx, &wy);
-        x = rx - wx;
-        y = ry - wy;
-      }
+      gint ex, ey;
+      gdk_window_get_origin (gdk_event_get_window (event), &ex , &ey);
+      gint wx, wy;
+      gdk_window_get_origin (gtk_widget_get_window (widget), &wx ,&wy);
+      x = gdk_event_get_x ((GdkEvent*)event) + ex - wx;
+      y = gdk_event_get_y ((GdkEvent*)event) + ey - wy;
     }
   }
   g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
