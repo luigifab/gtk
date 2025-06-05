@@ -2727,7 +2727,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
                                       gdouble               y,
                                       GtkRange             *range)
 {
-  g_print("\n\ngtk_range_multipress_gesture_pressed y=%f\n", y);
+  g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
   GtkWidget *widget = GTK_WIDGET (range);
   GtkRangePrivate *priv = range->priv;
   GdkDevice *source_device;
@@ -2752,6 +2752,21 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   source_device = gdk_event_get_source_device ((GdkEvent *) event);
   source = gdk_device_get_source (source_device);
 
+  // translate coordinates
+  if (GTK_IS_SCROLLBAR (widget)) {
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    if (config && (strcmp (config, "1") == 0)) {
+      gdouble rx, ry;
+      gint    wx, wy;
+      if (event && gdk_event_get_root_coords (event, &rx, &ry)) {
+        gdk_window_get_origin (gtk_widget_get_window (widget), &wx, &wy);
+        x = rx - wx;
+        y = ry - wy;
+      }
+    }
+  }
+  g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
+  
   priv->mouse_x = x;
   priv->mouse_y = y;
   update_mouse_coords (range, priv);
