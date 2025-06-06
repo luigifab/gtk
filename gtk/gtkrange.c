@@ -314,9 +314,9 @@ static GParamSpec *properties[LAST_PROP];
 static void
 update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
 {
-  GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
-  if (GTK_IS_SCROLLBAR (widget)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+  if (GTK_IS_SCROLLBAR (range)) {
+    GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
       GtkAllocation alloc;
       gtk_widget_get_allocation (widget, &alloc);
@@ -2217,7 +2217,7 @@ gtk_range_size_allocate (GtkWidget     *widget,
 
   if (gtk_widget_get_realized (widget)) {
     if (GTK_IS_SCROLLBAR (widget)) {
-      const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+      const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
       if (config && (strcmp (config, "1") == 0)) {
         GtkWidget *toplevel_widget = gtk_widget_get_toplevel (widget);
         GdkWindow *toplevel_window = gtk_widget_get_window (toplevel_widget);
@@ -2278,7 +2278,8 @@ gtk_range_realize (GtkWidget *widget)
   attributes.height = allocation.height;
   attributes.wclass = GDK_INPUT_OUTPUT; // GDK_INPUT_ONLY;
   attributes.event_mask = gtk_widget_get_events (widget);
-  attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK |
+  attributes.event_mask |= GDK_EXPOSURE_MASK |
+	                   GDK_BUTTON_PRESS_MASK |
                            GDK_BUTTON_RELEASE_MASK |
                            GDK_SCROLL_MASK |
                            GDK_SMOOTH_SCROLL_MASK |
@@ -2293,7 +2294,7 @@ gtk_range_realize (GtkWidget *widget)
   gtk_widget_register_window (widget, priv->event_window);
 
   if (GTK_IS_SCROLLBAR (widget)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
 	    gtk_gesture_set_window (GTK_GESTURE (priv->multipress_gesture), priv->event_window);
       gtk_gesture_set_window (GTK_GESTURE (priv->long_press_gesture), priv->event_window);
@@ -2311,7 +2312,7 @@ gtk_range_unrealize (GtkWidget *widget)
   gtk_range_remove_step_timer (range);
 
   if (GTK_IS_SCROLLBAR (widget)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
       gtk_gesture_set_window (GTK_GESTURE (priv->multipress_gesture), NULL);
       gtk_gesture_set_window (GTK_GESTURE (priv->long_press_gesture), NULL);
