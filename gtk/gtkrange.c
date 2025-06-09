@@ -2743,10 +2743,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   GtkAllocation slider_alloc;
 
 
-    GtkEventController *controller = GTK_EVENT_CONTROLLER (gesture);
-    GdkDevice *device = gtk_event_controller_get_device (controller);
-    if (!device)
-        return;
+    GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
     gint screen_x, screen_y;
     gdk_device_get_position (device, NULL, &screen_x, &screen_y);
     GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
