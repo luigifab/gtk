@@ -2232,6 +2232,9 @@ gtk_range_size_allocate (GtkWidget     *widget,
           gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y - 10);
           gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
         }
+	      gtk_gesture_set_window (priv->long_press_gesture, priv->event_window);
+	      gtk_gesture_set_window (priv->multipress_gesture, priv->event_window);
+	      gtk_gesture_set_window (priv->drag_gesture, priv->event_window);
       }
       else {
         gdk_window_move_resize (priv->event_window,
