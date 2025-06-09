@@ -303,6 +303,8 @@ static gboolean      gtk_range_render                   (GtkCssGadget *gadget,
                                                          int           height,
                                                          gpointer      user_data);
 
+static void gtk_range_init_gesture (GtkRange *range);
+
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (GtkRange, gtk_range, GTK_TYPE_WIDGET,
                                   G_ADD_PRIVATE (GtkRange)
                                   G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE,
@@ -843,6 +845,14 @@ gtk_range_init (GtkRange *range)
   gtk_css_gadget_set_state (priv->slider_gadget,
                             gtk_css_node_get_state (widget_node));
 
+  gtk_range_init_gesture (range);
+}
+
+static void
+gtk_range_init_gesture (GtkRange *range)
+{
+  GtkRangePrivate *priv = range->priv;
+  
   /* Note: Order is important here.
    * The ::drag-begin handler relies on the state set up by the
    * multipress ::pressed handler. Gestures are handling events
@@ -2232,9 +2242,8 @@ gtk_range_size_allocate (GtkWidget     *widget,
           gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y - 10);
           gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
         }
-	      gtk_gesture_set_window (priv->long_press_gesture, priv->event_window);
-	      gtk_gesture_set_window (priv->multipress_gesture, priv->event_window);
-	      gtk_gesture_set_window (priv->drag_gesture, priv->event_window);
+        gtk_range_init_gesture (range);
+        g_print("size_allocate\n");
       }
       else {
         gdk_window_move_resize (priv->event_window,
@@ -2282,7 +2291,7 @@ gtk_range_realize (GtkWidget *widget)
   attributes.wclass = GDK_INPUT_OUTPUT; // GDK_INPUT_ONLY;
   attributes.event_mask = gtk_widget_get_events (widget);
   attributes.event_mask |= GDK_EXPOSURE_MASK |
-	                   GDK_BUTTON_PRESS_MASK |
+                           GDK_BUTTON_PRESS_MASK |
                            GDK_BUTTON_RELEASE_MASK |
                            GDK_SCROLL_MASK |
                            GDK_SMOOTH_SCROLL_MASK |
