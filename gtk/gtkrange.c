@@ -324,7 +324,7 @@ update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
         priv->mouse_x = alloc.width / 2.0;
       else
         priv->mouse_y = alloc.height / 2.0;
-      g_print("mouse upd to x=%d, y=%d, w=%d, h=%d\n", priv->mouse_x, priv->mouse_y, alloc.width, alloc.height);
+      g_print("mouse upd to x=%d, y=%d\n", priv->mouse_x, priv->mouse_y);
     }
   }
 }
@@ -2728,7 +2728,7 @@ gtk_range_long_press_gesture_pressed (GtkGestureLongPress *gesture,
           y = screen_y - win_y;
         }
       }
-      g_print("\n\ngtk_range_long_press_gesture_pressed x=%f y=%f\n", x, y);
+      g_print("gtk_range_long_press_gesture_pressed x=%f y=%f\n", x, y);
 
       gtk_css_gadget_get_margin_box (priv->slider_gadget, &slider_alloc);
       update_initial_slider_position (range, x, y, &slider_alloc);
@@ -2767,7 +2767,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
       y = screen_y - win_y;
     }
   }
-  g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
+  g_print("gtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
   
   if (!gtk_widget_has_focus (widget))
     gtk_widget_grab_focus (widget);
@@ -2930,7 +2930,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
       y = screen_y - win_y;
     }
   }
-  g_print("\n\ngtk_range_multipress_gesture_released x=%f y=%f\n", x, y);
+  g_print("gtk_range_multipress_gesture_released x=%f y=%f\n", x, y);
   
   priv->mouse_x = x;
   priv->mouse_y = y;
@@ -3302,11 +3302,9 @@ gtk_range_event (GtkWidget *widget,
     {
       priv->mouse_x = G_MININT;
       priv->mouse_y = G_MININT;
-      g_print ("reset\n\n");
     }
   else if (gdk_event_get_coords (event, &x, &y))
     {
-      g_print ("before get coords mx=%d my=%d x=%f y=%f\n", priv->mouse_x, priv->mouse_y, x, y);
       priv->mouse_x = x;
       priv->mouse_y = y;
       update_mouse_coords (range, priv);
@@ -3596,43 +3594,43 @@ gtk_range_update_mouse_location (GtkRange *range)
 
   if (priv->grab_location != NULL) {
     priv->mouse_location = priv->grab_location;
-    g_print("loc=grab x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=grab x=%d y=%d\n", x, y);
   }
   else if (priv->stepper_a_gadget &&
            gtk_css_gadget_border_box_contains_point (priv->stepper_a_gadget, x, y)) {
     priv->mouse_location = priv->stepper_a_gadget;
-    g_print("loc=stepper_a x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=stepper_a x=%d y=%d\n", x, y);
   }
   else if (priv->stepper_b_gadget &&
            gtk_css_gadget_border_box_contains_point (priv->stepper_b_gadget, x, y)) {
     priv->mouse_location = priv->stepper_b_gadget;
-    g_print("loc=stepper_b x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=stepper_b x=%d y=%d\n", x, y);
   }
   else if (priv->stepper_c_gadget &&
            gtk_css_gadget_border_box_contains_point (priv->stepper_c_gadget, x, y)) {
     priv->mouse_location = priv->stepper_c_gadget;
-    g_print("loc=stepper_c x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=stepper_c x=%d y=%d\n", x, y);
   }
   else if (priv->stepper_d_gadget &&
            gtk_css_gadget_border_box_contains_point (priv->stepper_d_gadget, x, y)) {
     priv->mouse_location = priv->stepper_d_gadget;
-    g_print("loc=stepper_d x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=stepper_d x=%d y=%d\n", x, y);
   }
   else if (gtk_css_gadget_border_box_contains_point (priv->slider_gadget, x, y)) {
     priv->mouse_location = priv->slider_gadget;
-    g_print("loc=slider x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=slider x=%d y=%d\n", x, y);
   }
   else if (rectangle_contains_point (&slider_trace, x, y)) {
     priv->mouse_location = priv->trough_gadget;
-    g_print("loc=trough x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=trough x=%d y=%d\n", x, y);
   }
   else if (gtk_css_gadget_margin_box_contains_point (priv->gadget, x, y)) {
     priv->mouse_location = priv->gadget;
-    g_print("loc=main x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=main x=%d y=%d\n", x, y);
   }
   else {
     priv->mouse_location = NULL;
-    g_print("loc=null x=%d y=%d\n", x, y);
+    g_print("gtk_range_update_mouse_location loc=null x=%d y=%d\n", x, y);
   }
 
   if (old_location != priv->mouse_location)
