@@ -303,8 +303,6 @@ static gboolean      gtk_range_render                   (GtkCssGadget *gadget,
                                                          int           height,
                                                          gpointer      user_data);
 
-static void gtk_range_init_gesture (GtkRange *range);
-
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (GtkRange, gtk_range, GTK_TYPE_WIDGET,
                                   G_ADD_PRIVATE (GtkRange)
                                   G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE,
@@ -844,14 +842,6 @@ gtk_range_init (GtkRange *range)
                                               priv->trough_gadget, NULL);
   gtk_css_gadget_set_state (priv->slider_gadget,
                             gtk_css_node_get_state (widget_node));
-
-  gtk_range_init_gesture (range);
-}
-
-static void
-gtk_range_init_gesture (GtkRange *range)
-{
-  GtkRangePrivate *priv = range->priv;
   
   /* Note: Order is important here.
    * The ::drag-begin handler relies on the state set up by the
@@ -2242,10 +2232,6 @@ gtk_range_size_allocate (GtkWidget     *widget,
           gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y - 10);
           gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
         }
-        g_clear_object (&priv->drag_gesture);
-        g_clear_object (&priv->multipress_gesture);
-        g_clear_object (&priv->long_press_gesture);
-        gtk_range_init_gesture (range);
         g_print("size_allocate\n");
       }
       else {
@@ -2755,6 +2741,23 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   guint button;
   GdkModifierType state_mask;
   GtkAllocation slider_alloc;
+
+
+    GtkEventController *controller = GTK_EVENT_CONTROLLER (gesture);
+    GdkDevice *device = gtk_event_controller_get_device (controller);
+    if (!device)
+        return;
+    gint screen_x, screen_y;
+    gdk_device_get_position (device, NULL, &screen_x, &screen_y);
+    GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
+    if (!win)
+        return;
+    gint win_x, win_y;
+    gdk_window_get_origin (win, &win_x, &win_y);
+    x = screen_x - win_x;
+    y = screen_y - win_y;
+    g_print("\n\ngtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
+
 
   if (!gtk_widget_has_focus (widget))
     gtk_widget_grab_focus (widget);
