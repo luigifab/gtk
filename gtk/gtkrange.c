@@ -842,7 +842,7 @@ gtk_range_init (GtkRange *range)
                                               priv->trough_gadget, NULL);
   gtk_css_gadget_set_state (priv->slider_gadget,
                             gtk_css_node_get_state (widget_node));
-  
+
   /* Note: Order is important here.
    * The ::drag-begin handler relies on the state set up by the
    * multipress ::pressed handler. Gestures are handling events
@@ -2277,7 +2277,7 @@ gtk_range_realize (GtkWidget *widget)
   attributes.y = allocation.y;
   attributes.width = allocation.width;
   attributes.height = allocation.height;
-  attributes.wclass = GDK_INPUT_OUTPUT; // GDK_INPUT_ONLY;
+  attributes.wclass = GDK_INPUT_ONLY; // GDK_INPUT_OUTPUT
   attributes.event_mask = gtk_widget_get_events (widget);
   attributes.event_mask |= GDK_EXPOSURE_MASK |
                            GDK_BUTTON_PRESS_MASK |
