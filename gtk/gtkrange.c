@@ -2935,6 +2935,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
   priv->mouse_x = x;
   priv->mouse_y = y;
   range->priv->in_drag = FALSE;
+  update_mouse_coords (range, priv);
   stop_scrolling (range);
 }
 
