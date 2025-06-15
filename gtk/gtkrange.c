@@ -312,7 +312,7 @@ static guint signals[LAST_SIGNAL];
 static GParamSpec *properties[LAST_PROP];
 
 static void
-update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gdouble y)
+update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, gdouble *y)
 {
   if (GTK_IS_SCROLLBAR (range)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
@@ -329,7 +329,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gd
       GtkAllocation alloc;
       GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
       gtk_widget_get_allocation (widget, &alloc);
-      if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+      if (range->priv->orientation == GTK_ORIENTATION_VERTICAL)
         x = alloc.width / 2.0;
       else
         y = alloc.height / 2.0;
