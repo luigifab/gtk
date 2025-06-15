@@ -2784,9 +2784,10 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
 
   source_device = gdk_event_get_source_device ((GdkEvent *) event);
   source = gdk_device_get_source (source_device);
-  
+
   priv->mouse_x = x;
   priv->mouse_y = y;
+
   gtk_range_update_mouse_location (range);
   if (!priv->mouse_location)
     return;
