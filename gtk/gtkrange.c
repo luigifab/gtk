@@ -312,6 +312,23 @@ static guint signals[LAST_SIGNAL];
 static GParamSpec *properties[LAST_PROP];
 
 static void
+update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gdouble y)
+{
+  if (GTK_IS_SCROLLBAR (range)) {
+    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
+    if (config && (strcmp (config, "1") == 0)) {
+      GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
+      gint screen_x, screen_y, win_x, win_y;
+      gdk_device_get_position (device, NULL, &screen_x, &screen_y);
+      GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
+      gdk_window_get_origin (win, &win_x, &win_y);
+      x = screen_x - win_x;
+      y = screen_y - win_y;
+    }
+  }
+}
+
+static void
 update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
 {
   if (GTK_IS_SCROLLBAR (range)) {
@@ -2232,7 +2249,7 @@ gtk_range_size_allocate (GtkWidget     *widget,
           gdk_window_reparent (priv->event_window, toplevel_window, rel_x, rel_y - 10);
           gdk_window_resize (priv->event_window, allocation->width, allocation->height + 20);
         }
-        g_print("size_allocate\n");
+        //g_print("size_allocate\n");
       }
       else {
         gdk_window_move_resize (priv->event_window,
@@ -2715,19 +2732,7 @@ gtk_range_long_press_gesture_pressed (GtkGestureLongPress *gesture,
   if (priv->mouse_location == priv->slider_gadget && !priv->zoom)
     {
       GtkAllocation slider_alloc;
-    
-      if (GTK_IS_SCROLLBAR (range)) {
-        const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
-        if (config && (strcmp (config, "1") == 0)) {
-          GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
-          gint screen_x, screen_y, win_x, win_y;
-          gdk_device_get_position (device, NULL, &screen_x, &screen_y);
-          GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
-          gdk_window_get_origin (win, &win_x, &win_y);
-          x = screen_x - win_x;
-          y = screen_y - win_y;
-        }
-      }
+      update_mouse_coords_gesture (range, gesture, &x, &y);
       g_print("gtk_range_long_press_gesture_pressed x=%f y=%f\n", x, y);
 
       gtk_css_gadget_get_margin_box (priv->slider_gadget, &slider_alloc);
@@ -2755,18 +2760,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   GdkModifierType state_mask;
   GtkAllocation slider_alloc;
 
-  if (GTK_IS_SCROLLBAR (range)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
-    if (config && (strcmp (config, "1") == 0)) {
-      GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
-      gint screen_x, screen_y, win_x, win_y;
-      gdk_device_get_position (device, NULL, &screen_x, &screen_y);
-      GdkWindow *win = gtk_widget_get_window (widget);
-      gdk_window_get_origin (win, &win_x, &win_y);
-      x = screen_x - win_x;
-      y = screen_y - win_y;
-    }
-  }
+  update_mouse_coords_gesture (range, gesture, &x, &y);
   g_print("gtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
   
   if (!gtk_widget_has_focus (widget))
@@ -2918,18 +2912,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
 {
   GtkRangePrivate *priv = range->priv;
 
-  if (GTK_IS_SCROLLBAR (range)) {
-    const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
-    if (config && (strcmp (config, "1") == 0)) {
-      GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
-      gint screen_x, screen_y, win_x, win_y;
-      gdk_device_get_position (device, NULL, &screen_x, &screen_y);
-      GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
-      gdk_window_get_origin (win, &win_x, &win_y);
-      x = screen_x - win_x;
-      y = screen_y - win_y;
-    }
-  }
+  update_mouse_coords_gesture (range, gesture, &x, &y);
   g_print("gtk_range_multipress_gesture_released x=%f y=%f\n", x, y);
   
   priv->mouse_x = x;
