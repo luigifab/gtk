@@ -317,6 +317,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gd
   if (GTK_IS_SCROLLBAR (range)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
+      // update_mouse_coords_gesture
       GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
       gint screen_x, screen_y, win_x, win_y;
       gdk_device_get_position (device, NULL, &screen_x, &screen_y);
@@ -324,6 +325,15 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gd
       gdk_window_get_origin (win, &win_x, &win_y);
       x = screen_x - win_x;
       y = screen_y - win_y;
+      // update_mouse_coords
+      GtkAllocation alloc;
+      GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
+      gtk_widget_get_allocation (widget, &alloc);
+      if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+        x = alloc.width / 2.0;
+      else
+        y = alloc.height / 2.0;
+      g_print("mouse gesture upd to x=%d, y=%d\n", x, y);
     }
   }
 }
@@ -332,10 +342,10 @@ static void
 update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
 {
   if (GTK_IS_SCROLLBAR (range)) {
-    GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
       GtkAllocation alloc;
+      GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
       gtk_widget_get_allocation (widget, &alloc);
       if (priv->orientation == GTK_ORIENTATION_VERTICAL)
         priv->mouse_x = alloc.width / 2.0;
@@ -2777,7 +2787,6 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   
   priv->mouse_x = x;
   priv->mouse_y = y;
-  update_mouse_coords (range, priv);
   gtk_range_update_mouse_location (range);
   if (!priv->mouse_location)
     return;
@@ -2918,7 +2927,6 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
   priv->mouse_x = x;
   priv->mouse_y = y;
   range->priv->in_drag = FALSE;
-  update_mouse_coords (range, priv);
   stop_scrolling (range);
 }
 
