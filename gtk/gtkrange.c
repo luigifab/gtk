@@ -330,9 +330,9 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
       GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
       gtk_widget_get_allocation (widget, &alloc);
       if (range->priv->orientation == GTK_ORIENTATION_VERTICAL)
-        x = alloc.width / 2.0;
+        *x = alloc.width / 2.0;
       else
-        y = alloc.height / 2.0;
+        *y = alloc.height / 2.0;
       g_print("mouse gesture upd to x=%f, y=%f\n", *x, *y);
     }
   }
