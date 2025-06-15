@@ -333,7 +333,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble x, gd
         x = alloc.width / 2.0;
       else
         y = alloc.height / 2.0;
-      g_print("mouse gesture upd to x=%d, y=%d\n", x, y);
+      g_print("mouse gesture upd to x=%f, y=%f\n", x, y);
     }
   }
 }
@@ -2742,7 +2742,7 @@ gtk_range_long_press_gesture_pressed (GtkGestureLongPress *gesture,
   if (priv->mouse_location == priv->slider_gadget && !priv->zoom)
     {
       GtkAllocation slider_alloc;
-      update_mouse_coords_gesture (range, gesture, &x, &y);
+      update_mouse_coords_gesture (range, GTK_GESTURE (gesture), &x, &y);
       g_print("gtk_range_long_press_gesture_pressed x=%f y=%f\n", x, y);
 
       gtk_css_gadget_get_margin_box (priv->slider_gadget, &slider_alloc);
@@ -2770,7 +2770,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   GdkModifierType state_mask;
   GtkAllocation slider_alloc;
 
-  update_mouse_coords_gesture (range, gesture, &x, &y);
+  update_mouse_coords_gesture (range, GTK_GESTURE (gesture), &x, &y);
   g_print("gtk_range_multipress_gesture_pressed x=%f y=%f\n", x, y);
   
   if (!gtk_widget_has_focus (widget))
@@ -2922,7 +2922,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
 {
   GtkRangePrivate *priv = range->priv;
 
-  update_mouse_coords_gesture (range, gesture, &x, &y);
+  update_mouse_coords_gesture (range, GTK_GESTURE (gesture), &x, &y);
   g_print("gtk_range_multipress_gesture_released x=%f y=%f\n", x, y);
   
   priv->mouse_x = x;
