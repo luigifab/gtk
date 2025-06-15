@@ -323,8 +323,8 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
       gdk_device_get_position (device, NULL, &screen_x, &screen_y);
       GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
       gdk_window_get_origin (win, &win_x, &win_y);
-      x = screen_x - win_x;
-      y = screen_y - win_y;
+      *x = screen_x - win_x;
+      *y = screen_y - win_y;
       // update_mouse_coords
       GtkAllocation alloc;
       GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
@@ -333,7 +333,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
         x = alloc.width / 2.0;
       else
         y = alloc.height / 2.0;
-      g_print("mouse gesture upd to x=%f, y=%f\n", x, y);
+      g_print("mouse gesture upd to x=%f, y=%f\n", *x, *y);
     }
   }
 }
