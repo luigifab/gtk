@@ -331,7 +331,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
       GtkWidget *toplevel = gtk_widget_get_toplevel (widget);
       GdkWindow *toplevel_window = gtk_widget_get_window (toplevel);
       gdk_window_get_origin (toplevel_window, &window_x, &window_y);
-      gtk_widget_translate_coordinates (toplevel, widget, screen_x - widown_x, screen_y - window_y, &widget_x, &widget_y);
+      gtk_widget_translate_coordinates (toplevel, widget, screen_x - window_x, screen_y - window_y, &widget_x, &widget_y);
       *x = widget_x;
       *y = widget_y;
 
