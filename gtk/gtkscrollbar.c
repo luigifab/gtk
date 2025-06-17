@@ -172,11 +172,6 @@ gtk_scrollbar_update_style (GtkScrollbar *scrollbar)
 static void
 gtk_scrollbar_init (GtkScrollbar *scrollbar)
 {
-  const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
-  if (config && (strcmp (config, "1") == 0)) {
-    GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (scrollbar));
-    gtk_style_context_add_class (context, "classic-plus");
-  }
   gtk_scrollbar_update_style (scrollbar);
   gtk_range_set_slider_use_min_size (GTK_RANGE (scrollbar), TRUE);
 }
