@@ -337,7 +337,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
 
       // update_mouse_coords
       GtkAllocation alloc;
-      GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
+      widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
       gtk_widget_get_allocation (widget, &alloc);
       if (range->priv->orientation == GTK_ORIENTATION_VERTICAL)
         *x = alloc.width / 2.0;
