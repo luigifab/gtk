@@ -2563,6 +2563,7 @@ range_grab_remove (GtkRange *range)
   gtk_css_gadget_queue_allocate (priv->grab_location);
   priv->grab_location = NULL;
 
+  g_print("from range_grab_remove call gtk_range_update_mouse_location\n");
   gtk_range_update_mouse_location (range);
 
   update_slider_state (range);
@@ -2748,6 +2749,7 @@ gtk_range_long_press_gesture_pressed (GtkGestureLongPress *gesture,
 {
   GtkRangePrivate *priv = range->priv;
 
+  g_print("from gtk_range_long_press_gesture_pressed call gtk_range_update_mouse_location\n");
   gtk_range_update_mouse_location (range);
 
   if (priv->mouse_location == priv->slider_gadget && !priv->zoom)
@@ -2800,6 +2802,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   priv->mouse_y = y;
   g_print ("gtk_range_multipress_gesture_pressed priv->mouse_x = %d\n", priv->mouse_x);
 
+  g_print("from gtk_range_multipress_gesture_pressed call gtk_range_update_mouse_location\n");
   gtk_range_update_mouse_location (range);
   if (!priv->mouse_location)
     return;
@@ -3318,6 +3321,7 @@ gtk_range_event (GtkWidget *widget,
       update_mouse_coords (range, priv);
     }
 
+  g_print("from gtk_range_event call gtk_range_update_mouse_location\n");
   gtk_range_update_mouse_location (range);
 
   return GDK_EVENT_PROPAGATE;
@@ -3805,6 +3809,7 @@ gtk_range_calc_slider (GtkRange *range)
   if (priv->has_origin)
     gtk_css_gadget_queue_allocate (priv->trough_gadget);
 
+  g_print("from gtk_range_calc_slider call gtk_range_update_mouse_location\n");
   gtk_range_update_mouse_location (range);
 }
 
