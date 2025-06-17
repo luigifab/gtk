@@ -317,14 +317,24 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
   if (GTK_IS_SCROLLBAR (range)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
+      g_print("mouse gesture upd from x=%f, y=%f\n", *x, *y);
       // update_mouse_coords_gesture
       GdkDevice *device = gtk_gesture_get_device (GTK_GESTURE (gesture));
-      gint screen_x, screen_y, win_x, win_y;
+      gint screen_x, screen_y, window_x, window_y, widget_x, widget_y;
       gdk_device_get_position (device, NULL, &screen_x, &screen_y);
-      GdkWindow *win = gtk_widget_get_window (GTK_WIDGET (range));
-      gdk_window_get_origin (win, &win_x, &win_y);
-      *x = screen_x - win_x;
-      *y = screen_y - win_y;
+      /// GdkWindow *window = gtk_widget_get_window (GTK_WIDGET (range));
+      /// gdk_window_get_origin (window, &window_x, &window_y);
+      /// *x = screen_x - window_x;
+      /// *y = screen_y - window_y;
+
+      GtkWidget *widget = GTK_WIDGET (range);
+      GtkWidget *toplevel = gtk_widget_get_toplevel (widget);
+      GdkWindow *toplevel_window = gtk_widget_get_window (toplevel);
+      gdk_window_get_origin (toplevel_window, &window_x, &window_y);
+      gtk_widget_translate_coordinates (toplevel, widget, screen_x - widown_x, screen_y - window_y, &widget_x, &widget_y);
+      *x = widget_x;
+      *y = widget_y;
+
       // update_mouse_coords
       GtkAllocation alloc;
       GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
@@ -333,7 +343,7 @@ update_mouse_coords_gesture (GtkRange *range, GtkGesture *gesture, gdouble *x, g
         *x = alloc.width / 2.0;
       else
         *y = alloc.height / 2.0;
-      g_print("mouse gesture upd to x=%f, y=%f\n", *x, *y);
+      g_print("mouse gesture upd   to x=%f, y=%f\n", *x, *y);
     }
   }
 }
@@ -344,6 +354,7 @@ update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
   if (GTK_IS_SCROLLBAR (range)) {
     const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
     if (config && (strcmp (config, "1") == 0)) {
+      g_print("mouse upd from x=%d, y=%d\n", priv->mouse_x, priv->mouse_y);
       GtkAllocation alloc;
       GtkWidget *widget = gtk_widget_get_ancestor (GTK_WIDGET (range), GTK_TYPE_SCROLLBAR);
       gtk_widget_get_allocation (widget, &alloc);
@@ -351,7 +362,7 @@ update_mouse_coords (GtkRange *range, GtkRangePrivate *priv)
         priv->mouse_x = alloc.width / 2.0;
       else
         priv->mouse_y = alloc.height / 2.0;
-      g_print("mouse upd to x=%d, y=%d\n", priv->mouse_x, priv->mouse_y);
+      g_print("mouse upd   to x=%d, y=%d\n", priv->mouse_x, priv->mouse_y);
     }
   }
 }
