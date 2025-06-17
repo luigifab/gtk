@@ -2798,6 +2798,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
 
   priv->mouse_x = x;
   priv->mouse_y = y;
+  g_print ("gtk_range_multipress_gesture_pressed priv->mouse_x = %d\n", priv->mouse_x);
 
   gtk_range_update_mouse_location (range);
   if (!priv->mouse_location)
@@ -2937,6 +2938,7 @@ gtk_range_multipress_gesture_released (GtkGestureMultiPress *gesture,
   g_print("gtk_range_multipress_gesture_released x=%f y=%f\n", x, y);
   
   priv->mouse_x = x;
+  g_print ("gtk_range_multipress_gesture_released priv->mouse_x = %d\n", priv->mouse_x);
   priv->mouse_y = y;
   range->priv->in_drag = FALSE;
   stop_scrolling (range);
@@ -3272,6 +3274,7 @@ gtk_range_drag_gesture_update (GtkGestureDrag *gesture,
     {
       gtk_gesture_drag_get_start_point (gesture, &start_x, &start_y);
       priv->mouse_x = start_x + offset_x;
+      g_print ("gtk_range_drag_gesture_update priv->mouse_x = %d\n", priv->mouse_x);
       priv->mouse_y = start_y + offset_y;
       priv->in_drag = TRUE;
       update_mouse_coords (range, priv);
@@ -3310,6 +3313,7 @@ gtk_range_event (GtkWidget *widget,
   else if (gdk_event_get_coords (event, &x, &y))
     {
       priv->mouse_x = x;
+      g_print ("gtk_range_event priv->mouse_x = %d\n", priv->mouse_x);
       priv->mouse_y = y;
       update_mouse_coords (range, priv);
     }
