@@ -1755,7 +1755,7 @@ gtk_window_init (GtkWindow *window)
 
   gtk_css_node_add_class (widget_node, g_quark_from_static_string (GTK_STYLE_CLASS_BACKGROUND));
 
-  const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBARS");
+  const gchar *config = g_getenv ("GTK_ENLARGE_SCROLLBAR");
   if (config && (strcmp (config, "1") == 0))
     gtk_css_node_add_class (widget_node, g_quark_from_static_string ("scrollfix"));
 
