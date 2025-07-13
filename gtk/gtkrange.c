@@ -2816,6 +2816,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   if (priv->mouse_location == priv->slider_gadget &&
       gdk_event_triggers_context_menu (event))
     {
+      g_print ("gtk_range_multipress_gesture_pressed A\n");
       gboolean handled;
 
       gtk_gesture_set_state (priv->multipress_gesture, GTK_EVENT_SEQUENCE_CLAIMED);
@@ -2825,6 +2826,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
 
   if (priv->mouse_location == priv->slider_gadget)
     {
+      g_print ("gtk_range_multipress_gesture_pressed B\n");
       /* Shift-click in the slider = fine adjustment */
       if (shift_pressed)
         update_zoom_state (range, TRUE);
@@ -2839,6 +2841,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
            priv->mouse_location == priv->stepper_c_gadget ||
            priv->mouse_location == priv->stepper_d_gadget)
     {
+      g_print ("gtk_range_multipress_gesture_pressed C\n");
       GtkScrollType scroll;
 
       range_grab_add (range, priv->mouse_location);
@@ -2859,6 +2862,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
             (!primary_warps && shift_pressed && button == GDK_BUTTON_PRIMARY) ||
             (!primary_warps && button == GDK_BUTTON_MIDDLE)))
     {
+      g_print ("gtk_range_multipress_gesture_pressed D\n");
       /* warp to location */
       GdkRectangle slider;
       gdouble slider_low_value, slider_high_value, new_value;
@@ -2890,6 +2894,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
             (!primary_warps && !shift_pressed && button == GDK_BUTTON_PRIMARY) ||
             (primary_warps && button == GDK_BUTTON_MIDDLE)))
     {
+      g_print ("gtk_range_multipress_gesture_pressed E\n");
       /* jump by pages */
       GtkScrollType scroll;
       gdouble click_value;
@@ -2907,6 +2912,7 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
   else if (priv->mouse_location == priv->trough_gadget &&
            button == GDK_BUTTON_SECONDARY)
     {
+      g_print ("gtk_range_multipress_gesture_pressed F\n");
       /* autoscroll */
       gdouble click_value;
 
@@ -2922,10 +2928,15 @@ gtk_range_multipress_gesture_pressed (GtkGestureMultiPress *gesture,
       add_autoscroll (range);
     }
 
-  if (priv->grab_location == priv->slider_gadget);
+  if (priv->grab_location == priv->slider_gadget) //;
+    g_print ("gtk_range_multipress_gesture_pressed G\n");
     /* leave it to ::drag-begin to claim the sequence */
-  else if (priv->grab_location != NULL)
+  else if (priv->grab_location != NULL) {
+      g_print ("gtk_range_multipress_gesture_pressed H\n");
     gtk_gesture_set_state (priv->multipress_gesture, GTK_EVENT_SEQUENCE_CLAIMED);
+  }else {
+      g_print ("gtk_range_multipress_gesture_pressed I\n");
+  }
 }
 
 static void
